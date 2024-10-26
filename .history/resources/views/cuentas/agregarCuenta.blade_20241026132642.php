@@ -56,7 +56,7 @@
                     padreSelect.append('<option value="">-- Seleccionar Cuenta Padre --</option>');
                     data.forEach(cuenta => {
                         padreSelect.append(
-                            `<option value="${cuenta.idcuenta}" tipo="${cuenta.tipo}" recibe_saldo="${cuenta.recibe_saldo}">${cuenta.nro_cuenta} - ${cuenta.nombre}</option>`
+                            `<option value="${cuenta.idcuenta}" tipo="${cuenta.tipo}">${cuenta.nro_cuenta} - ${cuenta.nombre}</option>`
                         );
                     });
                 },
@@ -67,17 +67,14 @@
 
             $('#padre_id').on('change', function() {
                 const padreId = $(this).val();
-                const selectedOption = $(this).find('option:selected');
-                const tipo = selectedOption.attr('tipo');
-
-                $("#tipo").val(tipo);
+                const tipo = $(this).tipo();
+                console.log(tipo);
                 if (padreId) {
                     $.ajax({
                         url: "{{ route('cuentas.obtenerProximoNroCuenta') }}", // Ruta para obtener el siguiente nro_cuenta
                         method: 'post',
-                        data: {
-                            padreId: padreId,
-                            tipo: tipo
+                        data:{
+                            padreId : padreId
                         },
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
@@ -86,7 +83,6 @@
                         success: function(data) {
                             // Colocar el próximo número de cuenta en el campo correspondiente
                             $('#nro_cuenta').val(data.nro_cuenta_siguiente);
-                            $("#recibe_saldo").prop("checked", (data.recibe_saldo == 0)?false: true)
                         },
                         error: function() {
                             alert('Error al calcular el siguiente número de cuenta');
@@ -135,7 +131,7 @@
                 });
             });*/
 
-            /*$("#codigo").on("blur", function() {
+            $("#codigo").on("blur", function() {
                 $.ajax({
                     url: "{{ route('cuentas.getClasificaciones') }}", // Ruta al método en el controlador
                     dataType: "json",
@@ -154,7 +150,7 @@
 
                     }
                 });
-            });*/
+            });
             /*$("#codigo").autocomplete({
                 autoFocus: true,
                 source: function(request, response) {
@@ -289,10 +285,11 @@
         function guardarCuenta() {
             let data = {
                 nombre: $("#nombre").val(),
-                nro_cuenta: $("#nro_cuenta").val(),
-                tipo: $("#tipo").val(),
-                saldo_actual: $("#saldo_actual").val(),
-                recibe_saldo: $("#recibe_saldo").val()
+                codigo: $("#codigo").val(),
+                clasificacion: $("#clasificacion_id").val(),
+                saldoActual: $("#saldoActual").val(),
+                recibeSaldo: $("#recibeSaldo").val(),
+                cuentaPadre: $("#cuentaPadreId").val()
             }
 
             var url = "{{ route('cuentas.guardarCuenta') }}";
@@ -346,35 +343,21 @@
                 <div class="modal-body">
                     <form id="formCrearCuenta">
                         <div class="modal-body">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <!-- Select para elegir la cuenta padre -->
-                                    <div class="form-group">
-                                        <label for="padre_id">Cuenta Padre</label>
-                                        <select class="form-control" id="padre_id" name="padre_id">
-                                            <option value="">-- Seleccionar Cuenta Padre --</option>
-                                            <!-- Aquí se cargan las cuentas padres desde el backend -->
-                                            <!-- Ejemplo:
-                                                                    <option value="1">100 - Activo</option>
-                                                                    <option value="2">110 - Caja y Bancos</option>
-                                                                    -->
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="nro_cuenta">Número de Cuenta</label>
-                                        <input type="text" class="form-control" id="nro_cuenta" name="nro_cuenta"
-                                            disabled>
-                                    </div>
-                                </div>
-                                <!-- Tipo de cuenta -->
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="tipo">Tipo de Cuenta</label>
-                                        <input type="text" class="form-control" id="tipo" name="tipo" disabled>
-                                    </div>
-                                </div>
+                            <!-- Select para elegir la cuenta padre -->
+                            <div class="form-group">
+                                <label for="padre_id">Cuenta Padre</label>
+                                <select class="form-control" id="padre_id" name="padre_id">
+                                    <option value="">-- Seleccionar Cuenta Padre --</option>
+                                    <!-- Aquí se cargan las cuentas padres desde el backend -->
+                                    <!-- Ejemplo:
+                                                    <option value="1">100 - Activo</option>
+                                                    <option value="2">110 - Caja y Bancos</option>
+                                                    -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nro_cuenta">Número de Cuenta</label>
+                                <input type="text" class="form-control" id="nro_cuenta" name="nro_cuenta" readonly>
                             </div>
                             <!-- Nombre de la cuenta -->
                             <div class="form-group">
@@ -382,17 +365,23 @@
                                 <input type="text" class="form-control" id="nombre" name="nombre" required>
                             </div>
 
+                            <!-- Tipo de cuenta -->
+                            <div class="form-group">
+                                <label for="tipo">Tipo de Cuenta</label>
+                                <input type="text" class="form-control" id="tipo" name="tipo" required>
+                            </div>
 
                             <!-- Saldo actual -->
                             <div class="form-group">
                                 <label for="saldo_actual">Saldo Actual</label>
-                                <input type="text" class="form-control input-moneda" id="saldo_actual" name="saldo_actual">
+                                <input type="number" class="form-control" id="saldo_actual" name="saldo_actual"
+                                    step="0.01">
                             </div>
 
                             <!-- Recibe saldo -->
                             <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="recibe_saldo" name="recibe_saldo"
-                                    value="1" disabled>
+                                    value="1">
                                 <label class="form-check-label" for="recibe_saldo">¿Recibe Saldo?</label>
                             </div>
                         </div>
@@ -401,7 +390,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         onclick="cerrarModal('ajaxModalCuentas')">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarCuenta()">Guardar Cuenta</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cuenta</button>
                 </div>
             </div>
         </div>

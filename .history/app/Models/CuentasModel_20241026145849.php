@@ -263,8 +263,8 @@ class CuentasModel extends Model
                                  else ' '
                                  end as eliminada ,
                             c.modificado, c.solo_admin, c.usuario_id,
-                            case when c.recibe_saldo = 0 then 'NO'
-                                 when c.recibe_saldo = 1 then 'Si'
+                            case when c.recibe_saldo = 'F' then 'NO'
+                                 when c.recibe_saldo = 'T' then 'Si'
                                  else ' '
                                  end as recibe_saldo,
                             u.usuario
@@ -273,7 +273,7 @@ class CuentasModel extends Model
                     where 1=1 ";
 
         if (isset($filtro)) {
-            $query .= " and (upper(c.nombre) like :param) ";
+            $query .= " and (upper(c.nombre) like :param or c.codigo like :param) ";
         }
         $query .= " and c.eliminada = 'F' ";
         $pdo = DB::connection()->getPdo();

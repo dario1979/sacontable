@@ -69,8 +69,10 @@ class CuentasModel extends Model
 
         $query = "UPDATE cuentas
                 SET nombre = :pnombre,
-                    nro_cuenta = :pcodigo,
+                    codigo = :pcodigo,
+                    clasificacion_id = :pclasificacion,
                     saldo_actual = :psaldo_actual,
+                    id_padre = :pcuenta_padre,
                     utilizada = :putilizada,
                     eliminada = :peliminada,
                     modificado = :pmodificado,
@@ -83,15 +85,17 @@ class CuentasModel extends Model
         $result = $pdo->prepare($query);
 
 
-        $result->bindValue(":pnombre", \mb_strtoupper($validated["nombre"]));
-        $result->bindValue(":pcodigo", $validated["nro_cuenta"]);
-        $result->bindValue(":psaldo_actual", $validated["saldo_actual"]);
+        $result->bindValue(":pnombre", $validated["nombre"]);
+        $result->bindValue(":pcodigo", $validated["codigo"]);
+        $result->bindValue(":pclasificacion", $validated["clasificacion"]);
+        $result->bindValue(":psaldo_actual", $validated["saldoActual"]);
+        $result->bindValue(":pcuenta_padre", $validated["cuentaPadre"]);
         $result->bindValue(":putilizada", $validated["utilizada"]);
         $result->bindValue(":peliminada", $validated["eliminada"]);
         $result->bindValue(":pmodificado", $validated["modificada"]);
         $result->bindValue(":psoloadministrador", 'T');
         $result->bindValue(":pusuario", $validated["usuario_id"]);
-        $result->bindValue(":precibe_saldo", $validated["recibe_saldo"]);
+        $result->bindValue(":precibe_saldo", $validated["recibeSaldo"]);
 
         $result->bindValue(":pidcuenta", $validated["idcuenta"]);
 
@@ -253,7 +257,7 @@ class CuentasModel extends Model
 
     public function getCuentas($filtro)
     {
-        $query = "SELECT distinct c.nombre, c.idcuenta, c.nro_cuenta, c.saldo_actual,
+        $query = "SELECT distinct c.nombre, c.idcuenta, c.codigo, c.saldo_actual,
                             case when c.utilizada = 'F' then 'NO'
                                  when c.utilizada = 'T' then 'SI'
                                  else ' '
@@ -263,17 +267,18 @@ class CuentasModel extends Model
                                  else ' '
                                  end as eliminada ,
                             c.modificado, c.solo_admin, c.usuario_id,
-                            case when c.recibe_saldo = 0 then 'NO'
-                                 when c.recibe_saldo = 1 then 'Si'
+                            case when c.recibe_saldo = 'F' then 'NO'
+                                 when c.recibe_saldo = 'T' then 'Si'
                                  else ' '
                                  end as recibe_saldo,
                             u.usuario
                     FROM cuentas c
                     left join usuarios u on (c.usuario_id = u.idusuario)
+                    left join cuentas c1 on (c1.idcuenta = c.id_padre)
                     where 1=1 ";
 
         if (isset($filtro)) {
-            $query .= " and (upper(c.nombre) like :param) ";
+            $query .= " and (upper(c.nombre) like :param or c.codigo like :param) ";
         }
         $query .= " and c.eliminada = 'F' ";
         $pdo = DB::connection()->getPdo();
@@ -291,7 +296,7 @@ class CuentasModel extends Model
     {
         $pdo = DB::connection()->getPdo();
 
-        $query = "SELECT c.idcuenta, c.nombre, c.nro_cuenta as codigo, c.saldo_actual, c.tipo,
+        $query = "SELECT c.idcuenta, c.nombre, c.codigo, c.saldo_actual,
                             case when c.utilizada = 'F' then 'NO'
                                  when c.utilizada = 'T' then 'SI'
                                  else ' '
@@ -301,8 +306,8 @@ class CuentasModel extends Model
                                  else ' '
                                  end as eliminada ,
                             c.modificado, c.solo_admin, c.usuario_id,
-                            case when c.recibe_saldo = 0 then 'NO'
-                                 when c.recibe_saldo = 1 then 'SI'
+                            case when c.recibe_saldo = 'F' then 'NO'
+                                 when c.recibe_saldo = 'T' then 'SI'
                                  else ' '
                                  end as recibe_saldo,
                             u.usuario
@@ -373,6 +378,6 @@ class CuentasModel extends Model
         // Calcular el siguiente número de cuenta
         $nro_cuenta_siguiente = $ultimoHijo ? $ultimoHijo->nro_cuenta + 1 : $prefijoNroCuenta + 1;
 
-        return array($nro_cuenta_siguiente, $ultimoHijo->recibe_saldo);
+        return $nro_cuenta_siguiente;
     }
 }

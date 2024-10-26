@@ -69,7 +69,6 @@
                 const padreId = $(this).val();
                 const selectedOption = $(this).find('option:selected');
                 const tipo = selectedOption.attr('tipo');
-
                 $("#tipo").val(tipo);
                 if (padreId) {
                     $.ajax({
@@ -86,7 +85,6 @@
                         success: function(data) {
                             // Colocar el próximo número de cuenta en el campo correspondiente
                             $('#nro_cuenta').val(data.nro_cuenta_siguiente);
-                            $("#recibe_saldo").prop("checked", (data.recibe_saldo == 0)?false: true)
                         },
                         error: function() {
                             alert('Error al calcular el siguiente número de cuenta');

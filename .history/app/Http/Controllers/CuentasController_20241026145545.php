@@ -79,8 +79,8 @@ class CuentasController extends Controller
 
         $result = array_map(function ($cuenta) {
             return [
-                'label' => $cuenta['nro_cuenta'] . ' - ' . $cuenta['nombre'],  // Texto que se muestra en el autocomplete
-                'value' => $cuenta['nro_cuenta'] . ' - ' .  $cuenta['nombre'],  // Valor que se completa en el campo
+                'label' => $cuenta['codigo'] . ' - ' . $cuenta['nombre'],  // Texto que se muestra en el autocomplete
+                'value' => $cuenta['codigo'] . ' - ' .  $cuenta['nombre'],  // Valor que se completa en el campo
                 'id' => $cuenta['idcuenta']    // ID de la cuenta para usar en el campo oculto
             ];
         }, $cuentas);

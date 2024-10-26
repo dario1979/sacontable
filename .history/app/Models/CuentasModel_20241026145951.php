@@ -273,7 +273,7 @@ class CuentasModel extends Model
                     where 1=1 ";
 
         if (isset($filtro)) {
-            $query .= " and (upper(c.nombre) like :param) ";
+            $query .= " and (upper(c.nombre) like :param or c.codigo like :param) ";
         }
         $query .= " and c.eliminada = 'F' ";
         $pdo = DB::connection()->getPdo();

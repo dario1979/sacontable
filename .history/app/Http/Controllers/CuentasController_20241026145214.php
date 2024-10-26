@@ -79,8 +79,8 @@ class CuentasController extends Controller
 
         $result = array_map(function ($cuenta) {
             return [
-                'label' => $cuenta['nro_cuenta'] . ' - ' . $cuenta['nombre'],  // Texto que se muestra en el autocomplete
-                'value' => $cuenta['nro_cuenta'] . ' - ' .  $cuenta['nombre'],  // Valor que se completa en el campo
+                'label' => $cuenta['codigo'] . ' - ' . $cuenta['nombre'],  // Texto que se muestra en el autocomplete
+                'value' => $cuenta['codigo'] . ' - ' .  $cuenta['nombre'],  // Valor que se completa en el campo
                 'id' => $cuenta['idcuenta']    // ID de la cuenta para usar en el campo oculto
             ];
         }, $cuentas);
@@ -195,10 +195,11 @@ class CuentasController extends Controller
         $validated = $request->validate([
             'idcuenta' => 'required|int',
             'nombre' => 'required|string|max:255',
-            'nro_cuenta' => 'required|string|max:255',
-            'saldo_actual' => 'nullable|numeric',
-            'recibe_saldo' => 'required|string|max:1',
-            'tipo' => 'required|string|max:2'
+            'codigo' => 'required|string|max:255',
+            'clasificacion' => 'nullable|exists:clasificaciones,idclasificacion',
+            'saldoActual' => 'nullable|numeric',
+            'cuentaPadre' => 'nullable|exists:cuentas,idcuenta',
+            'recibeSaldo' => 'required|string|max:1',
         ]);
 
         $cuentasM = new CuentasModel();

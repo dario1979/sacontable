@@ -79,8 +79,8 @@ class CuentasController extends Controller
 
         $result = array_map(function ($cuenta) {
             return [
-                'label' => $cuenta['nro_cuenta'] . ' - ' . $cuenta['nombre'],  // Texto que se muestra en el autocomplete
-                'value' => $cuenta['nro_cuenta'] . ' - ' .  $cuenta['nombre'],  // Valor que se completa en el campo
+                'label' => $cuenta['codigo'] . ' - ' . $cuenta['nombre'],  // Texto que se muestra en el autocomplete
+                'value' => $cuenta['codigo'] . ' - ' .  $cuenta['nombre'],  // Valor que se completa en el campo
                 'id' => $cuenta['idcuenta']    // ID de la cuenta para usar en el campo oculto
             ];
         }, $cuentas);
@@ -141,7 +141,7 @@ class CuentasController extends Controller
         $cuentasM = new CuentasModel();
         $obtenerProximoNroCuenta = $cuentasM->obtenerProximoNroCuenta($padreId, $tipo);
 
-        return response()->json(array("nro_cuenta_siguiente"=>$obtenerProximoNroCuenta[0], "recibe_saldo"=>$obtenerProximoNroCuenta[1]));
+        return response()->json(array("nro_cuenta_siguiente"=>$obtenerProximoNroCuenta));
     }
 
 
@@ -190,15 +190,16 @@ class CuentasController extends Controller
     public function actualizarCuenta(Request $request)
     {
         $request->merge([
-            'saldo_actual' => str_replace(',', '', $request->input('saldo_actual'))
+            'saldoActual' => str_replace(',', '', $request->input('saldoActual'))
         ]);
         $validated = $request->validate([
             'idcuenta' => 'required|int',
             'nombre' => 'required|string|max:255',
-            'nro_cuenta' => 'required|string|max:255',
-            'saldo_actual' => 'nullable|numeric',
-            'recibe_saldo' => 'required|string|max:1',
-            'tipo' => 'required|string|max:2'
+            'codigo' => 'required|string|max:255',
+            'clasificacion' => 'nullable|exists:clasificaciones,idclasificacion',
+            'saldoActual' => 'nullable|numeric',
+            'cuentaPadre' => 'nullable|exists:cuentas,idcuenta',
+            'recibeSaldo' => 'required|string|max:1',
         ]);
 
         $cuentasM = new CuentasModel();

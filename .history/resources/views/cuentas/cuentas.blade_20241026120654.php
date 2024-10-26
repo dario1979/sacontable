@@ -2,10 +2,10 @@
 @section('style')
     <style>
         /*.container-xxl{
-                                        max-width: 1500px !important;
-                                        width: 1320px;
-                                        margin-left: 0em !important;
-                                    }*/
+                                    max-width: 1500px !important;
+                                    width: 1320px;
+                                    margin-left: 0em !important;
+                                }*/
 
         .highlight {
             background-color: yellow;
@@ -75,7 +75,6 @@
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.nombre}</div>`,
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.codigo}</div>`,
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.saldo_actual}</div>`,
-                                    `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.recibe_saldo}</div>`,
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.usuario}</div>`,
                                     (permissions && permissions.includes('CUENTAS.ELIMINAR')) ?
                                     `<div>
@@ -194,25 +193,48 @@
         }
 
         function eliminarCuenta(idcuenta) {
-
             $.ajax({
-                url: "{{ route('cuentas.eliminarCuenta') }}",
+                url: "{{ route('cuentas.cuentaUtilizada') }}",
                 type: "POST",
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                        'content') // Token CSRF para protección
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Token CSRF para protección
                 },
                 data: {
                     idcuenta: idcuenta
                 },
                 success: function(response) {
+                    if (response.msg !== 'Ok') {
+                        Swal.fire({
+                            text: response.msg,
+                            icon: response.type,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } else {
+                        $.ajax({
+                            url: "{{ route('cuentas.eliminarCuenta') }}",
+                            type: "POST",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content') // Token CSRF para protección
+                            },
+                            data: {
+                                idcuenta: idcuenta
+                            },
+                            success: function(response) {
 
-                    table.ajax.reload();
-                    Swal.fire({
-                        text: response.msg,
-                        icon: response.type,
-                        confirmButtonText: 'Aceptar'
-                    });
+                                table.ajax.reload();
+                                Swal.fire({
+                                    text: response.msg,
+                                    icon: response.type,
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            },
+                            error: function(xhr) {
+                                console.error('Error al cargar el modal');
+                            }
+                        });
+                    }
+
                 },
                 error: function(xhr) {
                     console.error('Error al cargar el modal');
@@ -259,9 +281,8 @@
                                         <thead>
                                             <tr>
                                                 <th>Nombre</th>
-                                                <th>Nro. Cuenta</th>
+                                                <th>Código</th>
                                                 <th>Saldo Actual</th>
-                                                <th>Recibe Saldo</th>
                                                 <th>Usuario</th>
                                                 @if (in_array('CUENTAS.ELIMINAR', $permissions ?? []))
                                                     <th>Eliminar</th>
@@ -293,9 +314,8 @@
                                         <thead>
                                             <tr>
                                                 <th>Nombre</th>
-                                                <th>Nro. Cuenta</th>
+                                                <th>Código</th>
                                                 <th>Saldo Actual</th>
-                                                <th>Recibe Saldo</th>
                                                 <th>Usuario</th>
                                             </tr>
                                         </thead>

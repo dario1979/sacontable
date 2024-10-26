@@ -72,7 +72,6 @@ Route::post('/cuentas.editarCuenta', [CuentasController::class, 'editarCuenta'])
 Route::post('/cuentas.cuentaUtilizada', [CuentasController::class, 'cuentaUtilizada'])->name('cuentas.cuentaUtilizada');
 Route::post('/cuentas.getClasificaciones', [CuentasController::class, 'getClasificaciones'])->name('cuentas.getClasificaciones');
 Route::post('/cuentas.obtenerCuentasPadres', [CuentasController::class, 'obtenerCuentasPadres'])->name('cuentas.obtenerCuentasPadres');
-Route::post('/cuentas.obtenerProximoNroCuenta', [CuentasController::class, 'obtenerProximoNroCuenta'])->name('cuentas.obtenerProximoNroCuenta');
 
 
 

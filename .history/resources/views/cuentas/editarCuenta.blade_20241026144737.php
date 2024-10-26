@@ -18,31 +18,10 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script type="text/javascript">
+
+        var recibe_saldo = "{{ $datos['recibe_saldo'] }}";
+        console.log(recibe_saldo);
         $(document).ready(function($) {
-            $('.solo-numeros').on('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
-
-            $('.input-moneda').on('keyup', function() {
-                // Permitir solo números y un punto decimal
-                let valor = this.value.replace(/[^0-9.]/g, '');
-
-                // Asegurar que solo haya un punto decimal
-                let partes = valor.split('.');
-                if (partes.length > 2) {
-                    valor = partes[0] + '.' + partes[1]; // Mantener solo la primera parte decimal
-                }
-
-                // Agregar comas como separador de miles solo a la parte entera
-                let entero = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                let decimal = partes[1] !== undefined ? '.' + partes[1].substring(0, 2) :
-                    ''; // Limitar a dos decimales
-
-                // Actualizar el valor en el campo de entrada
-                this.value = entero + decimal;
-            });
-
-
             $.ajax({
                 url: "{{ route('cuentas.obtenerCuentasPadres') }}", // Ruta que devuelve las cuentas padres
                 method: 'post',
@@ -64,40 +43,7 @@
                     alert('Error al cargar las cuentas padres');
                 }
             });
-
-            $('#padre_id').on('change', function() {
-                const padreId = $(this).val();
-                const selectedOption = $(this).find('option:selected');
-                const tipo = selectedOption.attr('tipo');
-
-                $("#tipo").val(tipo);
-                if (padreId) {
-                    $.ajax({
-                        url: "{{ route('cuentas.obtenerProximoNroCuenta') }}", // Ruta para obtener el siguiente nro_cuenta
-                        method: 'post',
-                        data: {
-                            padreId: padreId,
-                            tipo: tipo
-                        },
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                                'content') // Token CSRF para protección
-                        },
-                        success: function(data) {
-                            // Colocar el próximo número de cuenta en el campo correspondiente
-                            $('#nro_cuenta').val(data.nro_cuenta_siguiente);
-                            $("#recibe_saldo").prop("checked", (data.recibe_saldo == 0)?false: true)
-                        },
-                        error: function() {
-                            alert('Error al calcular el siguiente número de cuenta');
-                        }
-                    });
-                } else {
-                    // Si no hay cuenta padre seleccionada, limpia el campo nro_cuenta
-                    $('#nro_cuenta').val('');
-                }
-            });
-            /*$("#clasificacion").on("change", function() {
+           /* $("#clasificacion").on("change", function() {
                 var nombre = $("#clasificacion :selected").text()
                     .trim(); // Obtiene el valor seleccionado del select
 
@@ -120,10 +66,12 @@
                         $select.empty(); // Limpiar las opciones actuales
 
                         // Usar map para crear las opciones y agregarlas al select
-                        const opciones = response.map(item =>
-                            '<option value="' + item.id_catnombres + '">' + item.nombre +
-                            '</option>'
-                        );
+                        const opciones = response.map(item => {
+                            const selected = item.id_catnombres == nombre_id ?
+                                'selected' : '';
+                            return '<option value="' + item.id_catnombres + '" ' +
+                                selected + '>' + item.nombre + '</option>'
+                        });
 
                         // Insertar las opciones en el select
                         $select.append(opciones.join(''));
@@ -133,61 +81,8 @@
                         console.error('Error al realizar la solicitud AJAX:', error);
                     }
                 });
-            });*/
-
-            /*$("#codigo").on("blur", function() {
-                $.ajax({
-                    url: "{{ route('cuentas.getClasificaciones') }}", // Ruta al método en el controlador
-                    dataType: "json",
-                    type: "post",
-                    data: {
-                        descripcion: $(this).val() // Pasar el término de búsqueda como parámetro
-                    },
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(data) {
-
-                        $("#clasificacion").val(data["datos"]["nombre"]);
-                        $("#clasificacion_id").val(data["datos"]["idclasificacion"]);
-                        $("#recibeSaldo").val((data["datos"]["recibe_saldo"] == 0 ? 'F' : 'T'));
-
-                    }
-                });
-            });*/
-            /*$("#codigo").autocomplete({
-                autoFocus: true,
-                source: function(request, response) {
-                    $.ajax({
-                        url: "{{ route('cuentas.getClasificaciones') }}", // Ruta al método en el controlador
-                        dataType: "json",
-                        type: "GET",
-                        data: {
-                            descripcion: request.term // Pasar el término de búsqueda como parámetro
-                        },
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(data) {
-                            //console.log(data); // Verifica los datos en la consola
-                            response($.map(data, function(item) {
-                                return {
-                                    label: item.label,
-                                    value: item.value,
-                                    id: item.id
-                                };
-                            }));
-                        }
-                    });
-                },
-                minLength: 1,
-                select: function(event, ui) {
-                    console.log(ui); // Verifica los datos seleccionados en la consola
-                    //$("#cuentaPadreId").val(ui.item.id);
-                    //$("#cuentaPadre").val(ui.item.value);
-                    return false;
-                }
-            });*/
+            });
+            $("#clasificacion").change();*/
 
             $("#cuentaPadre").autocomplete({
                 autoFocus: true,
@@ -204,18 +99,14 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(data) {
-
-                            if (data.length > 0) {
-                                response($.map(data, function(item) {
-                                    return {
-                                        label: item.label,
-                                        value: item.value,
-                                        id: item.id
-                                    };
-                                }));
-                            } else {
-                                $("#cuentaPadre").val("s/c");
-                            }
+                            //console.log(data); // Verifica los datos en la consola
+                            response($.map(data, function(item) {
+                                return {
+                                    label: item.label,
+                                    value: item.value,
+                                    id: item.id
+                                };
+                            }));
                         }
                     });
                 },
@@ -251,7 +142,7 @@
 
             });
 
-            /*$("#codigo").on("blur", function() {
+            $("#codigo").on("blur", function() {
                 var data = $(this).val();
                 $.ajax({
                     url: "{{ route('cuentas.verificarCodigo') }}", // Ruta al método en el controlador
@@ -271,7 +162,7 @@
                         }
                     }
                 });
-            });*/
+            });
 
         });
         flatpickr("#fechaasiento", {
@@ -288,14 +179,16 @@
 
         function guardarCuenta() {
             let data = {
+                idcuenta: "{{ $datos['idcuenta'] }}",
                 nombre: $("#nombre").val(),
-                nro_cuenta: $("#nro_cuenta").val(),
-                tipo: $("#tipo").val(),
-                saldo_actual: $("#saldo_actual").val(),
-                recibe_saldo: $("#recibe_saldo").val()
+                codigo: $("#codigo").val(),
+                clasificacion: $("#clasificacion_id").val(),
+                saldoActual: $("#saldoActual").val(),
+                recibeSaldo: "{{ $datos['recibe_saldo']== 'NO' ? 'F' : 'T' }}",
+                cuentaPadre: $("#cuentaPadreId").val()
             }
 
-            var url = "{{ route('cuentas.guardarCuenta') }}";
+            var url = "{{ route('cuentas.actualizarCuenta') }}";
 
             $.ajax({
                 url: url,
@@ -340,7 +233,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="ajaxModalLabel">Alta de Cuenta</h5>
+                    <h5 class="modal-title" id="ajaxModalLabel">Edición de Cuenta</h5>
                     <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
                 </div>
                 <div class="modal-body">
@@ -351,7 +244,7 @@
                                     <!-- Select para elegir la cuenta padre -->
                                     <div class="form-group">
                                         <label for="padre_id">Cuenta Padre</label>
-                                        <select class="form-control" id="padre_id" name="padre_id">
+                                        <select class="form-control" id="padre_id" name="padre_id" disabled>
                                             <option value="">-- Seleccionar Cuenta Padre --</option>
                                             <!-- Aquí se cargan las cuentas padres desde el backend -->
                                             <!-- Ejemplo:
@@ -364,7 +257,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="nro_cuenta">Número de Cuenta</label>
-                                        <input type="text" class="form-control" id="nro_cuenta" name="nro_cuenta"
+                                        <input type="text" class="form-control" id="nro_cuenta" name="nro_cuenta" value="{{ $datos["codigo"] }}"
                                             disabled>
                                     </div>
                                 </div>
@@ -372,21 +265,21 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="tipo">Tipo de Cuenta</label>
-                                        <input type="text" class="form-control" id="tipo" name="tipo" disabled>
+                                        <input type="text" class="form-control" id="tipo" name="tipo" disabled value="{{ $datos["tipo"] }}">
                                     </div>
                                 </div>
                             </div>
                             <!-- Nombre de la cuenta -->
                             <div class="form-group">
                                 <label for="nombre">Nombre de la Cuenta</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required value="{{ $datos["nombre"] }}">
                             </div>
 
 
                             <!-- Saldo actual -->
                             <div class="form-group">
                                 <label for="saldo_actual">Saldo Actual</label>
-                                <input type="text" class="form-control input-moneda" id="saldo_actual" name="saldo_actual">
+                                <input type="text" disabled class="form-control input-moneda" id="saldo_actual" name="saldo_actual" value="{{ $datos["saldo_actual"] }}">
                             </div>
 
                             <!-- Recibe saldo -->
@@ -401,7 +294,9 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         onclick="cerrarModal('ajaxModalCuentas')">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarCuenta()">Guardar Cuenta</button>
+                    @if (in_array('CUENTAS.MODIFICAR', $permissions ?? []))
+                        <button type="button" class="btn btn-primary" onclick="guardarCuenta()">Guardar cambios</button>
+                    @endif
                 </div>
             </div>
         </div>

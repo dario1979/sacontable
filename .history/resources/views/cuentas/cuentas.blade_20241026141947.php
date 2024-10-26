@@ -2,10 +2,10 @@
 @section('style')
     <style>
         /*.container-xxl{
-                                        max-width: 1500px !important;
-                                        width: 1320px;
-                                        margin-left: 0em !important;
-                                    }*/
+                                    max-width: 1500px !important;
+                                    width: 1320px;
+                                    margin-left: 0em !important;
+                                }*/
 
         .highlight {
             background-color: yellow;
@@ -194,25 +194,48 @@
         }
 
         function eliminarCuenta(idcuenta) {
-
             $.ajax({
-                url: "{{ route('cuentas.eliminarCuenta') }}",
+                url: "{{ route('cuentas.cuentaUtilizada') }}",
                 type: "POST",
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                        'content') // Token CSRF para protección
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Token CSRF para protección
                 },
                 data: {
                     idcuenta: idcuenta
                 },
                 success: function(response) {
+                    if (response.msg !== 'Ok') {
+                        Swal.fire({
+                            text: response.msg,
+                            icon: response.type,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    } else {
+                        $.ajax({
+                            url: "{{ route('cuentas.eliminarCuenta') }}",
+                            type: "POST",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content') // Token CSRF para protección
+                            },
+                            data: {
+                                idcuenta: idcuenta
+                            },
+                            success: function(response) {
 
-                    table.ajax.reload();
-                    Swal.fire({
-                        text: response.msg,
-                        icon: response.type,
-                        confirmButtonText: 'Aceptar'
-                    });
+                                table.ajax.reload();
+                                Swal.fire({
+                                    text: response.msg,
+                                    icon: response.type,
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            },
+                            error: function(xhr) {
+                                console.error('Error al cargar el modal');
+                            }
+                        });
+                    }
+
                 },
                 error: function(xhr) {
                     console.error('Error al cargar el modal');

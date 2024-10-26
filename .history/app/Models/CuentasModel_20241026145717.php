@@ -253,7 +253,7 @@ class CuentasModel extends Model
 
     public function getCuentas($filtro)
     {
-        $query = "SELECT distinct c.nombre, c.idcuenta, c.nro_cuenta, c.saldo_actual,
+        $query = "SELECT distinct c.nombre, c.idcuenta, c.codigo, c.saldo_actual,
                             case when c.utilizada = 'F' then 'NO'
                                  when c.utilizada = 'T' then 'SI'
                                  else ' '
@@ -263,17 +263,18 @@ class CuentasModel extends Model
                                  else ' '
                                  end as eliminada ,
                             c.modificado, c.solo_admin, c.usuario_id,
-                            case when c.recibe_saldo = 0 then 'NO'
-                                 when c.recibe_saldo = 1 then 'Si'
+                            case when c.recibe_saldo = 'F' then 'NO'
+                                 when c.recibe_saldo = 'T' then 'Si'
                                  else ' '
                                  end as recibe_saldo,
                             u.usuario
                     FROM cuentas c
                     left join usuarios u on (c.usuario_id = u.idusuario)
+                    left join cuentas c1 on (c1.idcuenta = c.id_padre)
                     where 1=1 ";
 
         if (isset($filtro)) {
-            $query .= " and (upper(c.nombre) like :param) ";
+            $query .= " and (upper(c.nombre) like :param or c.codigo like :param) ";
         }
         $query .= " and c.eliminada = 'F' ";
         $pdo = DB::connection()->getPdo();

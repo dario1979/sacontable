@@ -56,7 +56,7 @@
                     padreSelect.append('<option value="">-- Seleccionar Cuenta Padre --</option>');
                     data.forEach(cuenta => {
                         padreSelect.append(
-                            `<option value="${cuenta.idcuenta}" tipo="${cuenta.tipo}" recibe_saldo="${cuenta.recibe_saldo}">${cuenta.nro_cuenta} - ${cuenta.nombre}</option>`
+                            `<option value="${cuenta.idcuenta}" tipo="${cuenta.tipo}">${cuenta.nro_cuenta} - ${cuenta.nombre}</option>`
                         );
                     });
                 },
@@ -69,7 +69,6 @@
                 const padreId = $(this).val();
                 const selectedOption = $(this).find('option:selected');
                 const tipo = selectedOption.attr('tipo');
-
                 $("#tipo").val(tipo);
                 if (padreId) {
                     $.ajax({
@@ -86,7 +85,6 @@
                         success: function(data) {
                             // Colocar el próximo número de cuenta en el campo correspondiente
                             $('#nro_cuenta').val(data.nro_cuenta_siguiente);
-                            $("#recibe_saldo").prop("checked", (data.recibe_saldo == 0)?false: true)
                         },
                         error: function() {
                             alert('Error al calcular el siguiente número de cuenta');
@@ -135,7 +133,7 @@
                 });
             });*/
 
-            /*$("#codigo").on("blur", function() {
+            $("#codigo").on("blur", function() {
                 $.ajax({
                     url: "{{ route('cuentas.getClasificaciones') }}", // Ruta al método en el controlador
                     dataType: "json",
@@ -154,7 +152,7 @@
 
                     }
                 });
-            });*/
+            });
             /*$("#codigo").autocomplete({
                 autoFocus: true,
                 source: function(request, response) {
@@ -289,10 +287,11 @@
         function guardarCuenta() {
             let data = {
                 nombre: $("#nombre").val(),
-                nro_cuenta: $("#nro_cuenta").val(),
-                tipo: $("#tipo").val(),
-                saldo_actual: $("#saldo_actual").val(),
-                recibe_saldo: $("#recibe_saldo").val()
+                codigo: $("#codigo").val(),
+                clasificacion: $("#clasificacion_id").val(),
+                saldoActual: $("#saldoActual").val(),
+                recibeSaldo: $("#recibeSaldo").val(),
+                cuentaPadre: $("#cuentaPadreId").val()
             }
 
             var url = "{{ route('cuentas.guardarCuenta') }}";
@@ -386,13 +385,13 @@
                             <!-- Saldo actual -->
                             <div class="form-group">
                                 <label for="saldo_actual">Saldo Actual</label>
-                                <input type="text" class="form-control input-moneda" id="saldo_actual" name="saldo_actual">
+                                <input type="number" class="form-control input-moneda" id="saldo_actual" name="saldo_actual">
                             </div>
 
                             <!-- Recibe saldo -->
                             <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="recibe_saldo" name="recibe_saldo"
-                                    value="1" disabled>
+                                    value="1">
                                 <label class="form-check-label" for="recibe_saldo">¿Recibe Saldo?</label>
                             </div>
                         </div>
@@ -401,7 +400,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         onclick="cerrarModal('ajaxModalCuentas')">Cerrar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarCuenta()">Guardar Cuenta</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cuenta</button>
                 </div>
             </div>
         </div>
