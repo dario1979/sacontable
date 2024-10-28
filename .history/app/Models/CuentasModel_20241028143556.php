@@ -149,7 +149,7 @@ class CuentasModel extends Model
                     left join usuarios u on (c.usuario_id = u.idusuario)
                     where c.recibe_saldo <> 0 ";
         if (!empty($searchValue)) {
-            $query .= " and upper(c.nombre) LIKE :search OR cast(c.nro_cuenta as varchar(5)) LIKE :search";
+            $query .= " and upper(c.nombre) LIKE :search OR c.nro_cuenta LIKE :search";
         }
 
         if (isset($solapa)) {
@@ -184,7 +184,7 @@ class CuentasModel extends Model
         $totalFilteredRecords = $totalRecords;
         if (!empty($searchValue)) {
             $pdo = DB::connection()->getPdo();
-            $stmtFiltered = $pdo->prepare("SELECT COUNT(*) AS total FROM cuentas c WHERE (c.nombre LIKE :search OR cast(c.nro_cuenta as varchar(5)) LIKE :search) and c.recibe_saldo <> 0");
+            $stmtFiltered = $pdo->prepare("SELECT COUNT(*) AS total FROM cuentas c WHERE (c.nombre LIKE :search OR c.nro_cuenta LIKE :search) and c.recibe_saldo <> 0");
             $stmtFiltered->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
             $stmtFiltered->execute();
             $totalFilteredRecords = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];

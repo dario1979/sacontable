@@ -12,11 +12,12 @@
                                 <div class="d-flex justify-content-between px-md-1">
                                     <div class="align-self-center">
                                         <a href="{{ route('roles') }}">
-                                            <i class="fas fa-scroll text-info fa-3x"></i>
+                                            <i class="fas fa-user-tag text-info fa-3x"></i>
                                         </a>
                                     </div>
                                     <div class="text-end">
-                                        <p class="mb-0">Libro Diario</p>
+                                        <h3 id="h3roles">0</h3>
+                                        <p class="mb-0">Roles</p>
                                     </div>
                                 </div>
                             </div>
@@ -28,11 +29,12 @@
                                 <div class="d-flex justify-content-between px-md-1">
                                     <div class="align-self-center">
                                         <a href="{{ route('permisos') }}">
-                                            <i class="fas fa-scroll text-info fa-3x"></i>
+                                            <i class="fas fa-sliders-h  text-warning fa-3x"></i>
                                         </a>
                                     </div>
                                     <div class="text-end">
-                                        <p class="mb-0">Libro Mayor</p>
+                                        <h3 id="h3permisos">0</h3>
+                                        <p class="mb-0">Permisos</p>
                                     </div>
                                 </div>
                             </div>

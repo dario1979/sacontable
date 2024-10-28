@@ -2,10 +2,10 @@
 @section('style')
     <style>
         /*.container-xxl{
-                                                max-width: 1500px !important;
-                                                width: 1320px;
-                                                margin-left: 0em !important;
-                                            }*/
+                                        max-width: 1500px !important;
+                                        width: 1320px;
+                                        margin-left: 0em !important;
+                                    }*/
 
         .highlight {
             background-color: yellow;
@@ -40,75 +40,11 @@
     </style>
 @endsection
 @section('script')
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-
-    <!-- jsPDF-AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.20/jspdf.plugin.autotable.min.js"></script>
-
     <script type="text/javascript">
         var table;
         var permissions = {!! json_encode($permissions) !!};
         $(document).ready(function($) {
-            $('#exportar-pdf-cuentas').on('click', function() {
-                const {
-                    jsPDF
-                } = window.jspdf;
-                const doc = new jsPDF('landscape');
 
-                // Título del documento
-                doc.setFontSize(14);
-                doc.text('Reporte de Cuentas', 14, 15);
-
-                // Obtener datos filtrados del DataTable
-                const data = table.rows({
-                    search: 'applied'
-                }).data().toArray();
-
-                // Convertir los datos para usar con jsPDF-AutoTable y asegurar UTF-8
-                const rows = data.map(item => [
-                    $(item[0]).text(), // Fecha
-                    $(item[1]).text(), // Nro. Asiento
-                    $(item[2]).text()
-                ]);
-
-                // Definir las columnas con ancho personalizado
-                const columns = [{
-                        header: 'Nombre',
-                        dataKey: 'nombre'
-                    },
-                    {
-                        header: 'Nro. cuenta',
-                        dataKey: 'codigo'
-                    },
-                    {
-                        header: 'Usuario',
-                        dataKey: 'usuario'
-                    }
-                ];
-
-                // Agregar la tabla al PDF con ajustes para que quepa en la página
-                doc.autoTable({
-                    head: [columns.map(col => col.header)],
-                    body: rows,
-                    startY: 20,
-                    tableWidth: 'auto', // Ajusta automáticamente la tabla al ancho de la página
-                    styles: {
-                        fontSize: 8,
-                        cellPadding: 2
-                    }, // Reduce el tamaño de fuente y margen interno
-                    columnStyles: {
-                        /*2: {
-                            cellWidth: 150,
-                            overflow: 'linebreak'
-                        },*/ // Forzar el ajuste en la columna Descripción
-                    },
-                    theme: 'grid',
-                });
-
-                // Descargar el PDF
-                doc.save('Reporte_Cuentas.pdf');
-            });
 
         });
 
@@ -138,7 +74,7 @@
                                 return [
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.nombre}</div>`,
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.codigo}</div>`,
-                                    // `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.saldo_actual}</div>`,
+                                   // `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.saldo_actual}</div>`,
                                     //`<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.recibe_saldo}</div>`,
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.usuario}</div>`,
                                     (permissions && permissions.includes('CUENTAS.ELIMINAR')) ?
@@ -312,12 +248,12 @@
                                 class="card-header py-3 d-flex justify-content-center align-items-center position-relative">
                                 <h5 class="mb-0"><strong>Plan de Cuentas</strong></h5>
                                 <!--@if (in_array('CUENTAS.CREAR', $permissions ?? []))
-    <i class="fas fa-plus position-absolute end-0 me-3"
-                                                style="font-size: 1.3rem; cursor: pointer;" onclick="agregarCuenta()"></i>
-    @endif
-                                        <button id="exportar-pdf" class="btn btn-danger">
-                                            <i class="fas fa-file-pdf"></i> PDF
-                                        </button>-->
+                                    <i class="fas fa-plus position-absolute end-0 me-3"
+                                        style="font-size: 1.3rem; cursor: pointer;" onclick="agregarCuenta()"></i>
+                                @endif
+                                <button id="exportar-pdf" class="btn btn-danger">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </button>-->
                             </div>
                             <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                                 <div id="modalContainer"></div>
@@ -325,9 +261,8 @@
                                     <div class="row mb-3" style="float: right">
                                         <div class="col-md-12 d-flex align-items-end">
                                             @if (in_array('CUENTAS.CREAR', $permissions ?? []))
-                                                <button id="agregar" class="btn btn-primary"
-                                                    onclick="agregarCuenta()">Agregar</button>
-                                                &nbsp;
+                                                <button id="agregar" class="btn btn-primary" onclick="agregarCuenta()">Agregar</button>
+                                                 &nbsp;
                                             @endif
                                             <button id="exportar-pdf-cuentas" class="btn btn-danger">
                                                 <i class="fas fa-file-pdf"></i> PDF

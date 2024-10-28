@@ -16,7 +16,8 @@
                                         </a>
                                     </div>
                                     <div class="text-end">
-                                        <p class="mb-0">Libro Diario</p>
+                                        <h3 id="h3roles">0</h3>
+                                        <p class="mb-0">Roles</p>
                                     </div>
                                 </div>
                             </div>
@@ -32,7 +33,8 @@
                                         </a>
                                     </div>
                                     <div class="text-end">
-                                        <p class="mb-0">Libro Mayor</p>
+                                        <h3 id="h3permisos">0</h3>
+                                        <p class="mb-0">Permisos</p>
                                     </div>
                                 </div>
                             </div>

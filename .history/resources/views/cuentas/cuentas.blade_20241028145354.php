@@ -2,10 +2,10 @@
 @section('style')
     <style>
         /*.container-xxl{
-                                                max-width: 1500px !important;
-                                                width: 1320px;
-                                                margin-left: 0em !important;
-                                            }*/
+                                            max-width: 1500px !important;
+                                            width: 1320px;
+                                            margin-left: 0em !important;
+                                        }*/
 
         .highlight {
             background-color: yellow;
@@ -40,12 +40,6 @@
     </style>
 @endsection
 @section('script')
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-
-    <!-- jsPDF-AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.20/jspdf.plugin.autotable.min.js"></script>
-
     <script type="text/javascript">
         var table;
         var permissions = {!! json_encode($permissions) !!};
@@ -61,7 +55,7 @@
                 doc.text('Reporte de Cuentas', 14, 15);
 
                 // Obtener datos filtrados del DataTable
-                const data = table.rows({
+                const data = tablaAsientos.rows({
                     search: 'applied'
                 }).data().toArray();
 
@@ -69,17 +63,22 @@
                 const rows = data.map(item => [
                     $(item[0]).text(), // Fecha
                     $(item[1]).text(), // Nro. Asiento
-                    $(item[2]).text()
+                    $(item[2]).text(), // Descripción con recorte para ajustar el ancho
+                    $(item[3]).text() // Usuario
                 ]);
 
                 // Definir las columnas con ancho personalizado
                 const columns = [{
-                        header: 'Nombre',
-                        dataKey: 'nombre'
+                        header: 'Fecha',
+                        dataKey: 'fecha'
                     },
                     {
-                        header: 'Nro. cuenta',
-                        dataKey: 'codigo'
+                        header: 'Nro. Asiento',
+                        dataKey: 'nro_asiento'
+                    },
+                    {
+                        header: 'Descripción',
+                        dataKey: 'descripcion'
                     },
                     {
                         header: 'Usuario',
@@ -98,16 +97,16 @@
                         cellPadding: 2
                     }, // Reduce el tamaño de fuente y margen interno
                     columnStyles: {
-                        /*2: {
+                        2: {
                             cellWidth: 150,
                             overflow: 'linebreak'
-                        },*/ // Forzar el ajuste en la columna Descripción
+                        }, // Forzar el ajuste en la columna Descripción
                     },
                     theme: 'grid',
                 });
 
                 // Descargar el PDF
-                doc.save('Reporte_Cuentas.pdf');
+                doc.save('Reporte_Asientos.pdf');
             });
 
         });
@@ -313,11 +312,11 @@
                                 <h5 class="mb-0"><strong>Plan de Cuentas</strong></h5>
                                 <!--@if (in_array('CUENTAS.CREAR', $permissions ?? []))
     <i class="fas fa-plus position-absolute end-0 me-3"
-                                                style="font-size: 1.3rem; cursor: pointer;" onclick="agregarCuenta()"></i>
+                                            style="font-size: 1.3rem; cursor: pointer;" onclick="agregarCuenta()"></i>
     @endif
-                                        <button id="exportar-pdf" class="btn btn-danger">
-                                            <i class="fas fa-file-pdf"></i> PDF
-                                        </button>-->
+                                    <button id="exportar-pdf" class="btn btn-danger">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </button>-->
                             </div>
                             <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                                 <div id="modalContainer"></div>
