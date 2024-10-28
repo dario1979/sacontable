@@ -25,7 +25,7 @@ class LibroDiarioController extends Controller
 
             return DataTables::of($asientos)
                 ->addColumn('detalle', function ($asiento) {
-                    return view('reportes.libro_diario', compact('asiento'))->render();
+                    return view('libro_diario.partials.detalle', compact('asiento'))->render();
                 })
                 ->rawColumns(['detalle'])
                 ->make(true);
