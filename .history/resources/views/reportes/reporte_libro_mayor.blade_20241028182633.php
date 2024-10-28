@@ -57,11 +57,10 @@
                 <section class="mb-4">
                     <div class="card">
                         <div class="card-header py-3 d-flex justify-content-between">
+                            <h5 class="mb-0"><strong>Libro Mayor</strong></h5>
                             <button class="btn btn-secondary" onclick="history.back()">
                                 <i class="fas fa-arrow-left"></i> Volver
                             </button>
-                            <h5 class="mb-0"><strong>Libro Mayor</strong></h5>
-
                         </div>
                         <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
                             <table class="table table-bordered" id="libroMayorTable">

@@ -62,7 +62,7 @@
         <div class="container pt-4">
             <section class="mb-4">
                 <div class="card">
-                    <div class="card-header py-3 d-flex justify-content-between">
+                    <div class="resources/views/roles/roles.blade.php">
                         <button class="btn btn-secondary" onclick="history.back()">
                             <i class="fas fa-arrow-left"></i> Volver
                         </button>

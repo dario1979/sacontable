@@ -62,8 +62,8 @@
         <div class="container pt-4">
             <section class="mb-4">
                 <div class="card">
-                    <div class="card-header py-3 d-flex justify-content-between">
-                        <button class="btn btn-secondary" onclick="history.back()">
+                    <div class="card-header py-3 d-flex justify-content-center align-items-center position-relative">
+                        <button class="btn btn-secondary" onclick="history.back()" style="float: left;">
                             <i class="fas fa-arrow-left"></i> Volver
                         </button>
                         <h5 class="mb-0"><strong>Libro Diario</strong></h5>
