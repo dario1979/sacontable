@@ -179,32 +179,6 @@ class CuentasModel extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getFilteredRecords($searchValue, $totalRecords)
-    {
-        $totalFilteredRecords = $totalRecords;
-        if (!empty($searchValue)) {
-            $pdo = DB::connection()->getPdo();
-            $stmtFiltered = $pdo->prepare("SELECT COUNT(*) AS total FROM cuentas c WHERE (c.nombre LIKE :search OR c.codigo LIKE :search) and c.recibe_saldo <> 0");
-            $stmtFiltered->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
-            $stmtFiltered->execute();
-            $totalFilteredRecords = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
-        }
-        return $totalFilteredRecords;
-    }
-
-    public function getTotalRecords()
-    {
-        $pdo = DB::connection()->getPdo();
-
-        // Consulta para contar el total de registros
-        $totalRecordsQuery = "SELECT COUNT(*) AS total FROM cuentas where recibe_saldo <> 0";
-        $stmtTotal = $pdo->prepare($totalRecordsQuery);
-        $stmtTotal->execute();
-        $totalRecords = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
-
-        return $totalRecords;
-    }
-
     public function verificarNombre($filtro)
     {
 
@@ -251,7 +225,31 @@ class CuentasModel extends Model
         return $cuentas;
     }
 
+    public function getFilteredRecords($searchValue, $totalRecords)
+    {
+        $totalFilteredRecords = $totalRecords;
+        if (!empty($searchValue)) {
+            $pdo = DB::connection()->getPdo();
+            $stmtFiltered = $pdo->prepare("SELECT COUNT(*) AS total FROM cuentas c WHERE c.nombre LIKE :search OR c.codigo LIKE :search");
+            $stmtFiltered->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
+            $stmtFiltered->execute();
+            $totalFilteredRecords = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
+        }
+        return $totalFilteredRecords;
+    }
 
+    public function getTotalRecords()
+    {
+        $pdo = DB::connection()->getPdo();
+
+        // Consulta para contar el total de registros
+        $totalRecordsQuery = "SELECT COUNT(*) AS total FROM cuentas";
+        $stmtTotal = $pdo->prepare($totalRecordsQuery);
+        $stmtTotal->execute();
+        $totalRecords = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
+
+        return $totalRecords;
+    }
 
     public function getCuentas($filtro)
     {

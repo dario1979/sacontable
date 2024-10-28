@@ -19,10 +19,7 @@ class AsientosController extends Controller
      */
     public function asientos(Request $request)
     {
-
-        $date = date('d/m/Y');
-        $data = array('fecha' => $date);
-        $vista = view('asientos.asientos', $data);
+        $vista = view('asientos.asientos');
 
         return $vista;
     }

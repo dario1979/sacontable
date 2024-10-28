@@ -86,8 +86,7 @@
                         success: function(data) {
                             // Colocar el próximo número de cuenta en el campo correspondiente
                             $('#nro_cuenta').val(data.nro_cuenta_siguiente);
-                            //$("#recibe_saldo").val((data.recibe_saldo == 0)?0: 1)
-                            $("#recibe_saldo").val(1)
+                            $("#recibe_saldo").prop("checked", (data.recibe_saldo == 0)?false: true)
                         },
                         error: function() {
                             alert('Error al calcular el siguiente número de cuenta');
@@ -391,12 +390,11 @@
                             </div>-->
 
                             <!-- Recibe saldo -->
-                            <!--<div class="form-group form-check">
+                            <div class="form-group form-check">
                                 <input type="checkbox" class="form-check-input" id="recibe_saldo" name="recibe_saldo"
-                                    value="1" disabled>
+                                    value="1">
                                 <label class="form-check-label" for="recibe_saldo">¿Recibe Saldo?</label>
-                            </div>-->
-                            <input type="hidden" id="recibe_saldo" value="">
+                            </div>
                         </div>
                     </form>
                 </div>

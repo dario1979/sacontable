@@ -153,7 +153,8 @@
                 const rows = data.map(item => [
                     $(item[0]).text(), // Fecha
                     $(item[1]).text(), // Nro. Asiento
-                    $(item[2]).text(), // Descripción con recorte para ajustar el ancho
+                    $(item[2]).text().substring(0,
+                    150), // Descripción con recorte para ajustar el ancho
                     $(item[3]).text() // Usuario
                 ]);
 

@@ -147,7 +147,7 @@ class CuentasModel extends Model
                             u.usuario
                     FROM cuentas c
                     left join usuarios u on (c.usuario_id = u.idusuario)
-                    where c.recibe_saldo <> 0 ";
+                    where 1=1 ";
         if (!empty($searchValue)) {
             $query .= " and upper(c.nombre) LIKE :search OR c.codigo LIKE :search";
         }
@@ -177,32 +177,6 @@ class CuentasModel extends Model
 
         // Obtener los resultados en un array asociativo
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getFilteredRecords($searchValue, $totalRecords)
-    {
-        $totalFilteredRecords = $totalRecords;
-        if (!empty($searchValue)) {
-            $pdo = DB::connection()->getPdo();
-            $stmtFiltered = $pdo->prepare("SELECT COUNT(*) AS total FROM cuentas c WHERE (c.nombre LIKE :search OR c.codigo LIKE :search) and c.recibe_saldo <> 0");
-            $stmtFiltered->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
-            $stmtFiltered->execute();
-            $totalFilteredRecords = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
-        }
-        return $totalFilteredRecords;
-    }
-
-    public function getTotalRecords()
-    {
-        $pdo = DB::connection()->getPdo();
-
-        // Consulta para contar el total de registros
-        $totalRecordsQuery = "SELECT COUNT(*) AS total FROM cuentas where recibe_saldo <> 0";
-        $stmtTotal = $pdo->prepare($totalRecordsQuery);
-        $stmtTotal->execute();
-        $totalRecords = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
-
-        return $totalRecords;
     }
 
     public function verificarNombre($filtro)
@@ -251,11 +225,35 @@ class CuentasModel extends Model
         return $cuentas;
     }
 
+    public function getFilteredRecords($searchValue, $totalRecords)
+    {
+        $totalFilteredRecords = $totalRecords;
+        if (!empty($searchValue)) {
+            $pdo = DB::connection()->getPdo();
+            $stmtFiltered = $pdo->prepare("SELECT COUNT(*) AS total FROM cuentas c WHERE c.nombre LIKE :search OR c.codigo LIKE :search");
+            $stmtFiltered->bindValue(':search', '%' . $searchValue . '%', PDO::PARAM_STR);
+            $stmtFiltered->execute();
+            $totalFilteredRecords = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
+        }
+        return $totalFilteredRecords;
+    }
 
+    public function getTotalRecords()
+    {
+        $pdo = DB::connection()->getPdo();
+
+        // Consulta para contar el total de registros
+        $totalRecordsQuery = "SELECT COUNT(*) AS total FROM cuentas";
+        $stmtTotal = $pdo->prepare($totalRecordsQuery);
+        $stmtTotal->execute();
+        $totalRecords = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
+
+        return $totalRecords;
+    }
 
     public function getCuentas($filtro)
     {
-        $query = "SELECT distinct c.nombre, c.idcuenta, c.nro_cuenta, c.saldo_actual, c.tipo,
+        $query = "SELECT distinct c.nombre, c.idcuenta, c.nro_cuenta, c.saldo_actual,
                             case when c.utilizada = 'F' then 'NO'
                                  when c.utilizada = 'T' then 'SI'
                                  else ' '
@@ -277,7 +275,7 @@ class CuentasModel extends Model
         if (isset($filtro)) {
             $query .= " and (upper(c.nombre) like :param) ";
         }
-        $query .= " and c.eliminada = 'F' and c.recibe_saldo = 1 ";
+        $query .= " and c.eliminada = 'F' ";
         $pdo = DB::connection()->getPdo();
 
         $stmtTotal = $pdo->prepare($query);
@@ -350,7 +348,7 @@ class CuentasModel extends Model
     {
         // Obtener solo las cuentas padres (recibe_saldo = 0)
         $cuentasPadres = CuentasModel::where('recibe_saldo', 0)
-                            //->whereRaw("CAST(nro_cuenta AS VARCHAR(10)) not LIKE '%00'")
+                            ->whereRaw("CAST(nro_cuenta AS VARCHAR(10)) not LIKE '%00'")
                             ->get(['idcuenta', 'nro_cuenta', 'nombre', 'tipo', 'recibe_saldo']);
         return $cuentasPadres;
     }

@@ -149,15 +149,15 @@
                     search: 'applied'
                 }).data().toArray();
 
-                // Convertir los datos para usar con jsPDF-AutoTable y asegurar UTF-8
+                // Convertir los datos para usar con jsPDF-AutoTable, extrayendo solo el texto
                 const rows = data.map(item => [
                     $(item[0]).text(), // Fecha
                     $(item[1]).text(), // Nro. Asiento
-                    $(item[2]).text(), // Descripción con recorte para ajustar el ancho
+                    $(item[2]).text(), // Descripción
                     $(item[3]).text() // Usuario
                 ]);
 
-                // Definir las columnas con ancho personalizado
+                // Definir las columnas con ancho personalizado para "Descripción"
                 const columns = [{
                         header: 'Fecha',
                         dataKey: 'fecha'
@@ -176,30 +176,35 @@
                     }
                 ];
 
-                // Agregar la tabla al PDF con ajustes para que quepa en la página
+                // Agregar la tabla al PDF con opciones para ajustar el texto de la descripción
                 doc.autoTable({
                     head: [columns.map(col => col.header)],
                     body: rows,
                     startY: 20,
-                    tableWidth: 'auto', // Ajusta automáticamente la tabla al ancho de la página
                     styles: {
-                        fontSize: 8,
-                        cellPadding: 2
-                    }, // Reduce el tamaño de fuente y margen interno
+                        fontSize: 10,
+                        cellPadding: 3
+                    },
                     columnStyles: {
                         2: {
-                            cellWidth: 150,
-                            overflow: 'linebreak'
-                        }, // Forzar el ajuste en la columna Descripción
+                            cellWidth: 120
+                        }, // Ancho específico para la columna de Descripción
                     },
                     theme: 'grid',
+                    didParseCell: function(data) {
+                        // Asegurarse de que el texto largo en la columna "Descripción" se ajuste con saltos de línea
+                        if (data.column.index === 2 && data.cell.raw) {
+                            data.cell.styles.cellWidth = 'wrap'; // Permite el ajuste de texto
+                            data.cell.styles.overflow = 'linebreak';
+                            data.cell.styles.minCellHeight =
+                            20; // Ajusta la altura mínima de la celda
+                        }
+                    }
                 });
 
                 // Descargar el PDF
                 doc.save('Reporte_Asientos.pdf');
             });
-
-
 
 
 

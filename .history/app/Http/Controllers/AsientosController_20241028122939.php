@@ -19,10 +19,7 @@ class AsientosController extends Controller
      */
     public function asientos(Request $request)
     {
-
-        $date = date('d/m/Y');
-        $data = array('fecha' => $date);
-        $vista = view('asientos.asientos', $data);
+        $vista = view('asientos.asientos');
 
         return $vista;
     }
@@ -87,7 +84,8 @@ class AsientosController extends Controller
             $solapa = $request->input('solapa');
             $fechaInicio = $request->input('fecha_inicio');
             $fechaFin = $request->input('fecha_fin');
-
+            var_dump($fechaInicio, $fechaFin);
+            die();
             // Llamar al método getDataTable del modelo para obtener los datos
             $asientoM = new AsientoContableModel();
             $cuentas = $asientoM->getDataTable($start, $length, $searchValue, $solapa, $fechaInicio, $fechaFin);

@@ -153,11 +153,12 @@
                 const rows = data.map(item => [
                     $(item[0]).text(), // Fecha
                     $(item[1]).text(), // Nro. Asiento
-                    $(item[2]).text(), // Descripción con recorte para ajustar el ancho
+                    $(item[2]).text(), // Descripción
                     $(item[3]).text() // Usuario
-                ]);
+                ].map(text => text.normalize("NFKD").replace(/[\u0300-\u036f]/g,
+                ""))); // Normalización UTF-8
 
-                // Definir las columnas con ancho personalizado
+                // Definir las columnas
                 const columns = [{
                         header: 'Fecha',
                         dataKey: 'fecha'
@@ -176,30 +177,32 @@
                     }
                 ];
 
-                // Agregar la tabla al PDF con ajustes para que quepa en la página
+                // Agregar la tabla al PDF con opciones para ajuste de texto
                 doc.autoTable({
                     head: [columns.map(col => col.header)],
                     body: rows,
                     startY: 20,
-                    tableWidth: 'auto', // Ajusta automáticamente la tabla al ancho de la página
                     styles: {
-                        fontSize: 8,
-                        cellPadding: 2
-                    }, // Reduce el tamaño de fuente y margen interno
+                        fontSize: 10,
+                        cellPadding: 3
+                    },
                     columnStyles: {
                         2: {
-                            cellWidth: 150,
-                            overflow: 'linebreak'
-                        }, // Forzar el ajuste en la columna Descripción
+                            cellWidth: 'wrap'
+                        } // Ajuste automático para la columna de Descripción
                     },
                     theme: 'grid',
+                    didDrawCell: data => {
+                        // Forzar el ajuste de texto en la columna de Descripción
+                        if (data.column.index === 2) {
+                            data.cell.styles.overflow = 'linebreak';
+                        }
+                    }
                 });
 
                 // Descargar el PDF
                 doc.save('Reporte_Asientos.pdf');
             });
-
-
 
 
 

@@ -12,12 +12,6 @@
 @endsection
 
 @section('script')
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-
-    <!-- jsPDF-AutoTable -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.20/jspdf.plugin.autotable.min.js"></script>
-
     <script type="text/javascript">
         var tablaAsientos;
         var myModal;
@@ -133,8 +127,8 @@
             });
 
             // Escucha el evento de clic en el botón de exportación a PDF
-            // Escucha el evento de clic en el botón de exportación a PDF
             $('#exportar-pdf').on('click', function() {
+                // Inicializar jsPDF
                 const {
                     jsPDF
                 } = window.jspdf;
@@ -149,15 +143,15 @@
                     search: 'applied'
                 }).data().toArray();
 
-                // Convertir los datos para usar con jsPDF-AutoTable y asegurar UTF-8
+                // Convertir los datos para usar con jsPDF-AutoTable
                 const rows = data.map(item => [
-                    $(item[0]).text(), // Fecha
-                    $(item[1]).text(), // Nro. Asiento
-                    $(item[2]).text(), // Descripción con recorte para ajustar el ancho
-                    $(item[3]).text() // Usuario
+                    item[0], // Fecha
+                    item[1], // Nro. Asiento
+                    item[2], // Descripción
+                    item[3] // Usuario
                 ]);
 
-                // Definir las columnas con ancho personalizado
+                // Definir las columnas
                 const columns = [{
                         header: 'Fecha',
                         dataKey: 'fecha'
@@ -176,32 +170,20 @@
                     }
                 ];
 
-                // Agregar la tabla al PDF con ajustes para que quepa en la página
+                // Agregar la tabla al PDF
                 doc.autoTable({
                     head: [columns.map(col => col.header)],
                     body: rows,
                     startY: 20,
-                    tableWidth: 'auto', // Ajusta automáticamente la tabla al ancho de la página
                     styles: {
-                        fontSize: 8,
-                        cellPadding: 2
-                    }, // Reduce el tamaño de fuente y margen interno
-                    columnStyles: {
-                        2: {
-                            cellWidth: 150,
-                            overflow: 'linebreak'
-                        }, // Forzar el ajuste en la columna Descripción
+                        fontSize: 10
                     },
-                    theme: 'grid',
+                    theme: 'grid'
                 });
 
                 // Descargar el PDF
                 doc.save('Reporte_Asientos.pdf');
             });
-
-
-
-
 
         });
 

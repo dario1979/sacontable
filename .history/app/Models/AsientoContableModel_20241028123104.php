@@ -52,7 +52,8 @@ class AsientoContableModel extends Model
     // Método para manejar la respuesta de DataTable
     public function getDataTable($start, $length, $searchValue, $solapa, $fechaInicio, $fechaFin)
     {
-
+        var_dump($fechaInicio, $fechaFin);
+            die();
         $pdo = DB::connection()->getPdo();
         $query = "SELECT ac.idasiento, TO_CHAR(ac.fecha, 'dd/mm/yyyy') as fecha, ac.descripcion, ac.usuario_id, ac.nro_asiento, u.usuario
                     FROM asientos_contables ac
@@ -75,7 +76,6 @@ class AsientoContableModel extends Model
             $result->bindValue(':search', '%' . mb_strtoupper($searchValue) . '%', PDO::PARAM_STR);
         }
         if ($fechaInicio && $fechaFin) {
-
             $result->bindValue(':finicio', $fechaInicio);
             $result->bindValue(':ffin', $fechaFin);
         }

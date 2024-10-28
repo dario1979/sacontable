@@ -28,7 +28,7 @@
                     <i class="fas fa-scroll fa-fw me-3"></i><span>Reportes</span>
                 </a>
 
-                <!--<a href="#" class="list-group-item list-group-item-action py-2 nav-link {{ request()->is('inventario') ? 'active' : '' }}">
+                <a href="#" class="list-group-item list-group-item-action py-2 nav-link {{ request()->is('inventario') ? 'active' : '' }}">
                     <i class="fas fa-boxes fa-fw me-3"></i><span>Inventarios</span>
                 </a>
 
@@ -50,7 +50,7 @@
 
                 <a href="#" class="list-group-item list-group-item-action py-2 nav-link {{ request()->is('impuestos') ? 'active' : '' }}">
                     <i class="fas fa-file-invoice-dollar fa-fw me-3"></i><span>Impuestos</span>
-                </a>-->
+                </a>
 
                 <a href="{{ route('configuracion') }}"
                     class="list-group-item list-group-item-action py-2 nav-link {{ request()->is('configuracion') ? 'active' : '' }}">

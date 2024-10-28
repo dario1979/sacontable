@@ -75,7 +75,8 @@ class AsientoContableModel extends Model
             $result->bindValue(':search', '%' . mb_strtoupper($searchValue) . '%', PDO::PARAM_STR);
         }
         if ($fechaInicio && $fechaFin) {
-
+            var_dump($fechaInicio, $fechaFin);
+            die();
             $result->bindValue(':finicio', $fechaInicio);
             $result->bindValue(':ffin', $fechaFin);
         }

@@ -141,7 +141,7 @@
                 const doc = new jsPDF('landscape');
 
                 // Título del documento
-                doc.setFontSize(14);
+                doc.setFontSize(12);
                 doc.text('Reporte de Asientos', 14, 15);
 
                 // Obtener datos filtrados del DataTable
@@ -149,13 +149,14 @@
                     search: 'applied'
                 }).data().toArray();
 
-                // Convertir los datos para usar con jsPDF-AutoTable y asegurar UTF-8
+                // Convertir los datos para usar con jsPDF-AutoTable, asegurando UTF-8
                 const rows = data.map(item => [
                     $(item[0]).text(), // Fecha
                     $(item[1]).text(), // Nro. Asiento
-                    $(item[2]).text(), // Descripción con recorte para ajustar el ancho
+                    $(item[2]).text(), // Descripción
                     $(item[3]).text() // Usuario
-                ]);
+                ].map(text => text.normalize("NFKD").replace(/[\u0300-\u036f]/g,
+                ""))); // Normalización UTF-8
 
                 // Definir las columnas con ancho personalizado
                 const columns = [{
@@ -181,24 +182,36 @@
                     head: [columns.map(col => col.header)],
                     body: rows,
                     startY: 20,
-                    tableWidth: 'auto', // Ajusta automáticamente la tabla al ancho de la página
+                    tableWidth: 'wrap', // Ajusta la tabla al ancho de la página
                     styles: {
                         fontSize: 8,
                         cellPadding: 2
                     }, // Reduce el tamaño de fuente y margen interno
                     columnStyles: {
+                        0: {
+                            cellWidth: 30
+                        }, // Fecha
+                        1: {
+                            cellWidth: 30
+                        }, // Nro. Asiento
                         2: {
-                            cellWidth: 150,
-                            overflow: 'linebreak'
-                        }, // Forzar el ajuste en la columna Descripción
+                            cellWidth: 120
+                        }, // Descripción
+                        3: {
+                            cellWidth: 40
+                        } // Usuario
                     },
                     theme: 'grid',
+                    didDrawCell: data => {
+                        if (data.column.index === 2) { // Columna de Descripción
+                            data.cell.styles.overflow = 'linebreak';
+                        }
+                    }
                 });
 
                 // Descargar el PDF
                 doc.save('Reporte_Asientos.pdf');
             });
-
 
 
 

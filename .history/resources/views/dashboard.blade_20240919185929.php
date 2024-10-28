@@ -41,7 +41,7 @@
                     <div class="col-xl-3 col-sm-6 col-12 mb-4">
                         <div class="card">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between px-md-1">
+                                <div class="d-flex justify-content-between px-md-1">                                    
                                     <div class="align-self-center">
                                         <i class="fas fa-book-open text-info fa-3x"></i>
                                     </div>
@@ -50,16 +50,16 @@
                                         <p class="mb-0">Reportes</p>
                                     </div>
                                 </div>
-
+                              
                             </div>
                         </div>
                     </div>
-                    <!--<div class="col-xl-3 col-sm-6 col-12 mb-4">
+                    <div class="col-xl-3 col-sm-6 col-12 mb-4">
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between px-md-1">
                                     <div class="align-self-center">
-
+                                        <!--<i class="fas fa-map-marker-alt text-danger fa-3x"></i>-->
                                         <i class="fas fa-boxes text-danger fa-3x"></i>
                                     </div>
                                     <div class="text-end">
@@ -69,7 +69,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>-->
+                    </div>
                 </div>
                 <!--<div class="row">
                     <div class="col-xl-3 col-sm-6 col-12 mb-4">
@@ -140,7 +140,7 @@
                     </div>
                 </div>-->
                 <!--<div class="row">
-
+                   
                     <div class="col-xl-3 col-sm-6 col-12 mb-4">
                         <div class="card">
                             <div class="card-body">

@@ -75,7 +75,7 @@
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.nombre}</div>`,
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.codigo}</div>`,
                                    // `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.saldo_actual}</div>`,
-                                    //`<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.recibe_saldo}</div>`,
+                                    `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.recibe_saldo}</div>`,
                                     `<div onclick="editarCuenta(${item.idcuenta})" style="cursor:pointer">${item.usuario}</div>`,
                                     (permissions && permissions.includes('CUENTAS.ELIMINAR')) ?
                                     `<div>
@@ -261,7 +261,7 @@
                                                 <th>Nombre</th>
                                                 <th>Nro. Cuenta</th>
                                                 <!--<th>Saldo Actual</th>-->
-                                                <!--<th>Recibe Saldo</th>-->
+                                                <th>Recibe Saldo</th>
                                                 <th>Usuario</th>
                                                 @if (in_array('CUENTAS.ELIMINAR', $permissions ?? []))
                                                     <th>Eliminar</th>
@@ -295,7 +295,7 @@
                                                 <th>Nombre</th>
                                                 <th>Nro. Cuenta</th>
                                                 <!--<th>Saldo Actual</th>-->
-                                                <!--<th>Recibe Saldo</th>-->
+                                                <th>Recibe Saldo</th>
                                                 <th>Usuario</th>
                                             </tr>
                                         </thead>
