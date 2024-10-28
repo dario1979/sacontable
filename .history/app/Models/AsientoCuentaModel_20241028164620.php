@@ -26,12 +26,12 @@ class AsientoCuentaModel extends Model
 
     public function asiento(): BelongsTo
     {
-        return $this->belongsTo(AsientoContableModel::class, 'asiento_id');
+        return $this->belongsTo(AsientoContable::class, 'asiento_id');
     }
 
     public function cuenta(): BelongsTo
     {
-        return $this->belongsTo(CuentasModel::class, 'cuenta_id');
+        return $this->belongsTo(Cuenta::class, 'cuenta_id');
     }
 
 }

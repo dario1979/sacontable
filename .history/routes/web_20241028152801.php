@@ -9,7 +9,6 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\CuentasController;
 use App\Http\Controllers\LibroDiarioController;
-use App\Http\Controllers\LibroMayorController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\ReportesController;
@@ -79,10 +78,8 @@ Route::post('/cuentas.obtenerProximoNroCuenta', [CuentasController::class, 'obte
 
 
 Route::get('/libros.libro_diario', [LibroDiarioController::class, 'libro_diario'])->name('libros.libro_diario');
-Route::get('/libros.getAsientos', [LibroDiarioController::class, 'getAsientos'])->name('libros.getAsientos');
+Route::get('/libros.generarReporte', [LibroDiarioController::class, 'generarReporte'])->name('libros.generarReporte');
 
-Route::get('/libros.libro_mayor', [LibroMayorController::class, 'libro_mayor'])->name('libros.libro_mayor');
-Route::get('/libros.getMovimientos', [LibroMayorController::class, 'getMovimientos'])->name('libros.getMovimientos');
 
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

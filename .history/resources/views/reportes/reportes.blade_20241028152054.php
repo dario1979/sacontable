@@ -11,7 +11,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between px-md-1">
                                     <div class="align-self-center">
-                                        <a href="{{ route('libros.libro_diario') }}">
+                                        <a href="{{ route('libros.generarReporte') }}">
                                             <i class="fas fa-scroll text-info fa-3x"></i>
                                         </a>
                                     </div>
@@ -27,7 +27,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between px-md-1">
                                     <div class="align-self-center">
-                                        <a href="{{ route('libros.libro_mayor') }}">
+                                        <a href="{{ route('permisos') }}">
                                             <i class="fas fa-scroll text-info fa-3x"></i>
                                         </a>
                                     </div>

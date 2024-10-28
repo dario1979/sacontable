@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use PDO;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AsientoContableModel extends Model
 {

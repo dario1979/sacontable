@@ -82,7 +82,6 @@ Route::get('/libros.libro_diario', [LibroDiarioController::class, 'libro_diario'
 Route::get('/libros.getAsientos', [LibroDiarioController::class, 'getAsientos'])->name('libros.getAsientos');
 
 Route::get('/libros.libro_mayor', [LibroMayorController::class, 'libro_mayor'])->name('libros.libro_mayor');
-Route::get('/libros.getMovimientos', [LibroMayorController::class, 'getMovimientos'])->name('libros.getMovimientos');
 
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

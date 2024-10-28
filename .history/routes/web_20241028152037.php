@@ -9,7 +9,6 @@ use App\Http\Controllers\UsuariosController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\CuentasController;
 use App\Http\Controllers\LibroDiarioController;
-use App\Http\Controllers\LibroMayorController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\ReportesController;
@@ -76,13 +75,8 @@ Route::post('/cuentas.getClasificaciones', [CuentasController::class, 'getClasif
 Route::post('/cuentas.obtenerCuentasPadres', [CuentasController::class, 'obtenerCuentasPadres'])->name('cuentas.obtenerCuentasPadres');
 Route::post('/cuentas.obtenerProximoNroCuenta', [CuentasController::class, 'obtenerProximoNroCuenta'])->name('cuentas.obtenerProximoNroCuenta');
 
+Route::post('/libros.generarReporte', [LibroDiarioController::class, 'generarReporte'])->name('libros.generarReporte');
 
-
-Route::get('/libros.libro_diario', [LibroDiarioController::class, 'libro_diario'])->name('libros.libro_diario');
-Route::get('/libros.getAsientos', [LibroDiarioController::class, 'getAsientos'])->name('libros.getAsientos');
-
-Route::get('/libros.libro_mayor', [LibroMayorController::class, 'libro_mayor'])->name('libros.libro_mayor');
-Route::get('/libros.getMovimientos', [LibroMayorController::class, 'getMovimientos'])->name('libros.getMovimientos');
 
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');

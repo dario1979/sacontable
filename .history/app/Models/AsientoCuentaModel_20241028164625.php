@@ -31,7 +31,7 @@ class AsientoCuentaModel extends Model
 
     public function cuenta(): BelongsTo
     {
-        return $this->belongsTo(CuentasModel::class, 'cuenta_id');
+        return $this->belongsTo(Cuenta::class, 'cuenta_id');
     }
 
 }

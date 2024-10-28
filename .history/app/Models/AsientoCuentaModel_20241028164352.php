@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AsientoCuentaModel extends Model
 {
@@ -24,14 +23,9 @@ class AsientoCuentaModel extends Model
         'saldo',
     ];
 
-    public function asiento(): BelongsTo
+    public function asientoCuentas(): HasMany
     {
-        return $this->belongsTo(AsientoContableModel::class, 'asiento_id');
-    }
-
-    public function cuenta(): BelongsTo
-    {
-        return $this->belongsTo(CuentasModel::class, 'cuenta_id');
+        return $this->hasMany(AsientoCuentaModel::class, 'asiento_id');
     }
 
 }

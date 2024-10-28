@@ -98,7 +98,7 @@
                 </li>-->
 
                 <!-- Language Dropdown -->
-                <!--<li class="nav-item dropdown">
+                <li class="nav-item dropdown">
                     <a class="nav-link me-3 me-lg-0 dropdown-toggle hidden-arrow" href="#" id="navbarDropdown"
                         role="button" data-mdb-dropdown-init aria-expanded="false">
                         <i class="united kingdom flag m-0"></i>
@@ -115,7 +115,7 @@
                         <li><a class="dropdown-item" href="#"><i class="russia flag"></i>Русский</a></li>
                         <li><a class="dropdown-item" href="#"><i class="portugal flag"></i>Português</a></li>
                     </ul>
-                </li>-->
+                </li>
 
                 <!-- User Dropdown -->
                 <li class="nav-item dropdown">
@@ -124,8 +124,8 @@
                         <i class="fas fa-user-circle fa-lg"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-                        <!--<li><a class="dropdown-item" href="#">Mi cuenta</a></li>
-                        <li><a class="dropdown-item" href="#">Configuración</a></li>-->
+                        <li><a class="dropdown-item" href="#">Mi cuenta</a></li>
+                        <li><a class="dropdown-item" href="#">Configuración</a></li>
                         <li><a class="dropdown-item" href="./logout">Salir</a></li>
                     </ul>
                 </li>

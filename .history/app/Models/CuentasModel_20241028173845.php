@@ -383,6 +383,6 @@ class CuentasModel extends Model
 
     public function movimientos(): HasMany
     {
-        return $this->hasMany(AsientoCuentaModel::class, 'cuenta_id');
+        return $this->hasMany(AsientoCuenta::class, 'cuenta_id');
     }
 }
