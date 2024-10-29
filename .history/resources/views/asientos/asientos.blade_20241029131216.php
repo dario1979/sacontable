@@ -1,0 +1,386 @@
+<!-- resources/views/home.blade.php -->
+@extends('app')
+
+@section('style')
+    <style>
+        .dataTables_wrapper .table .descripcion {
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+    </style>
+@endsection
+
+@section('script')
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <!-- jsPDF-AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.20/jspdf.plugin.autotable.min.js"></script>
+
+    <script type="text/javascript">
+        var tablaAsientos;
+        var myModal;
+        $(document).ready(function($) {
+
+            flatpickr("#fecha_inicio", {
+                dateFormat: "d/m/Y", // Formato de fecha DD/MM/YYYY
+                locale: "es", // Idioma español
+                onChange: function(selectedDates, dateStr, instance) {
+                    const fechaFin = document.getElementById("fecha_fin")._flatpickr.selectedDates[0];
+                    if (fechaFin && selectedDates[0] > fechaFin) {
+                        //alert("La fecha de inicio no puede ser mayor que la fecha de fin.");
+                        Swal.fire({
+                            text: 'La fecha de inicio no puede ser mayor que la fecha de fin',
+                            icon: 'warning',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                instance.clear(); // Opcional: limpiar el campo de fecha de inicio
+                            }
+                        });
+
+                    }
+                }
+            });
+
+            flatpickr("#fecha_fin", {
+                dateFormat: "d/m/Y", // Formato de fecha DD/MM/YYYY
+                locale: "es", // Idioma español
+            });
+            let aplicarFiltroFechas = false;
+            // Inicializar DataTable
+            tablaAsientos = $('#asientos-table').DataTable({
+                processing: true,
+                serverSide: true,
+                orderable: false,
+                ordering: false,
+                destroy: true,
+                scrollY: '35vh',
+                columnDefs: [{
+                        width: '40%',
+                        targets: 2
+                    } // Cambia el índice "2" según la posición de la columna "Descripción"
+                ],
+                autoWidth: false,
+                ajax: {
+                    url: "{{ route('asientos.lista') }}",
+                    type: 'post',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: function(d) {
+                        if (aplicarFiltroFechas) {
+                            // Agregar las fechas de filtro a la solicitud AJAX
+                            d.fecha_inicio = $('#fecha_inicio').val();
+                            d.fecha_fin = $('#fecha_fin').val();
+                        }
+                    },
+                    dataSrc: json => {
+                        if (Array.isArray(json.data)) {
+                            return json.data.map(item => {
+                                return [
+                                    `<div onclick="detalleCuenta(${item.idasiento})" style="cursor:pointer">${item.fecha}</div>`,
+                                    `<div onclick="detalleCuenta(${item.idasiento})" style="cursor:pointer">${item.nro_asiento}</div>`,
+                                    `<div onclick="detalleCuenta(${item.idasiento})" style="cursor:pointer" class="descripcion">${item.descripcion}</div>`,
+                                    `<div onclick="detalleCuenta(${item.idasiento})" style="cursor:pointer">${item.usuario}</div>`
+                                ];
+                            });
+                        } else {
+                            console.error("La respuesta JSON no contiene un array en el campo 'data'.");
+                            return [];
+                        }
+                    }
+                }
+                /*,
+                                columns: [{
+                                        data: 'fecha',
+                                        name: 'fecha',
+                                        orderable: false
+                                    },
+                                    {
+                                        data: 'nro_asiento',
+                                        name: 'nro_asiento',
+                                        orderable: false
+                                    },
+                                    {
+                                        data: 'descripcion',
+                                        name: 'descripcion',
+                                        orderable: false
+                                    },
+                                    {
+                                        data: 'usuario_nombre',
+                                        name: 'usuario.usuario',
+                                        orderable: false
+                                    } // Columna personalizada para el nombre del usuario
+                                ]*/
+                ,
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            $('#filtrar-fechas').on('click', function() {
+                aplicarFiltroFechas = true;
+                tablaAsientos.ajax.reload(); // Recargar la tabla con los nuevos parámetros
+            });
+
+            $("#limpiar-filtros").on('click', function() {
+                aplicarFiltroFechas = false;
+                tablaAsientos.ajax.reload();
+                $('#fecha_inicio').val("{{ $fecha }}");
+                $('#fecha_fin').val("{{ $fecha }}");
+            });
+
+            // Escucha el evento de clic en el botón de exportación a PDF
+            // Escucha el evento de clic en el botón de exportación a PDF
+            $('#exportar-pdf').on('click', function() {
+                const {
+                    jsPDF
+                } = window.jspdf;
+                const doc = new jsPDF('landscape');
+
+                // Título del documento
+                doc.setFontSize(14);
+                doc.text('Reporte de Asientos', 14, 15);
+
+                // Obtener datos filtrados del DataTable
+                const data = tablaAsientos.rows({
+                    search: 'applied'
+                }).data().toArray();
+
+                // Convertir los datos para usar con jsPDF-AutoTable y asegurar UTF-8
+                const rows = data.map(item => [
+                    $(item[0]).text(), // Fecha
+                    $(item[1]).text(), // Nro. Asiento
+                    $(item[2]).text(), // Descripción con recorte para ajustar el ancho
+                    $(item[3]).text() // Usuario
+                ]);
+
+                // Definir las columnas con ancho personalizado
+                const columns = [{
+                        header: 'Fecha',
+                        dataKey: 'fecha'
+                    },
+                    {
+                        header: 'Nro. Asiento',
+                        dataKey: 'nro_asiento'
+                    },
+                    {
+                        header: 'Descripción',
+                        dataKey: 'descripcion'
+                    },
+                    {
+                        header: 'Usuario',
+                        dataKey: 'usuario'
+                    }
+                ];
+
+                // Agregar la tabla al PDF con ajustes para que quepa en la página
+                doc.autoTable({
+                    head: [columns.map(col => col.header)],
+                    body: rows,
+                    startY: 20,
+                    tableWidth: 'auto', // Ajusta automáticamente la tabla al ancho de la página
+                    styles: {
+                        fontSize: 8,
+                        cellPadding: 2
+                    }, // Reduce el tamaño de fuente y margen interno
+                    columnStyles: {
+                        2: {
+                            cellWidth: 150,
+                            overflow: 'linebreak'
+                        }, // Forzar el ajuste en la columna Descripción
+                    },
+                    theme: 'grid',
+                });
+
+                // Descargar el PDF
+                doc.save('Reporte_Asientos.pdf');
+            });
+
+
+
+
+
+        });
+
+
+        function agregarAsiento() {
+            $.ajax({
+                url: "{{ route('asientos.agregarAsiento') }}?modal=true",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Token CSRF para protección
+                },
+                success: function(response) {
+                    //console.log(response);
+                    // Cargar el contenido del modal en el contenedor
+                    $('#modalContainer').html(response);
+
+
+                    // Inicializar el modal y mostrarlo
+                    myModal = new bootstrap.Modal(document.getElementById('ajaxModalAsientos'));
+                    //console.log(myModal);
+                    myModal.show();
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar el modal');
+                }
+            });
+        }
+
+        function detalleCuenta(id_asiento) {
+            $.ajax({
+                url: "{{ route('asientos.detalleAsiento') }}?modal=true",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Token CSRF para protección
+                },
+                data: {
+                    id_asiento: id_asiento
+                },
+                success: function(response) {
+                    //console.log(response);
+                    // Cargar el contenido del modal en el contenedor
+                    $('#modalContainer').html(response);
+
+
+                    // Inicializar el modal y mostrarlo
+                    myModal = new bootstrap.Modal(document.getElementById('ajaxModalAsientos'));
+                    //console.log(myModal);
+                    myModal.show();
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar el modal');
+                }
+            });
+        }
+
+        setInterval(function() {
+            tablaAsientos.ajax.reload();
+        }, 30000);
+
+        /*function guardarAsiento() {
+            let data = {
+                fecha: $("#fechaasiento").val(),
+                descripcion: $("#descripcionAsiento").val()
+            }
+
+            var url = "{{ route('asientos.guardarAsiento') }}";
+
+            $.ajax({
+                url: url,
+                type: "post",
+                data: data,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // El token CSRF desde el meta
+                },
+                //error: swalError,
+                success: function(json) {
+
+
+
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: 'El registro se ha guardado correctamente',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            myModal.hide();
+                            table.ajax.reload();
+                            $('#ajaxModalAsientos').on('hidden.bs.modal', function() {
+                                datepicker.close(); // Cierra el calendario de flatpickr cuando el modal se oculta
+                            });
+                        }
+                    });
+
+
+
+
+
+                }
+            });
+        }*/
+    </script>
+@endsection
+<!-- Modal Dinámico -->
+
+
+
+
+
+@section('content')
+    <main style="margin-top: 58px">
+        <div class="container pt-4">
+            <!-- Section: Main content -->
+            <section class="mb-4">
+                <div class="card">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0 text-center"><strong>Asientos Contables</strong>
+                            @if (in_array('ASIENTOS.CREAR', $permissions ?? []))
+                                <i class="fas fa-plus position-absolute end-0 me-3"
+                                    style="font-size: 1.3rem; cursor: pointer;" onclick="agregarAsiento()"></i>
+                            @endif
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="modalContainer"></div>
+                        <div class="table-responsive">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="fecha_inicio">Fecha Inicio</label>
+                                    <input type="date" id="fecha_inicio" class="form-control"
+                                        value="{{ $fecha }}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="fecha_fin">Fecha Fin</label>
+                                    <input type="date" id="fecha_fin" class="form-control" value="{{ $fecha }}">
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button id="filtrar-fechas" class="btn btn-primary">Filtrar</button>
+                                    &nbsp;
+                                    <button id="limpiar-filtros" class="btn btn-outline-success">Limpiar Filtros</button>
+                                    &nbsp;
+                                    <button id="exportar-pdf" class="btn btn-danger">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </button>
+                                </div>
+                            </div>
+                            <table id="asientos-table" class="table table-hover text-nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Nro. Asiento</th>
+                                        <th>Descripción</th>
+                                        <th>Usuario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+@endsection
