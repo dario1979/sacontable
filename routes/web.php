@@ -14,7 +14,10 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\PermisosController;
 use App\Http\Controllers\ReportesController;
 
-//Route::view('/', 'welcome');
+Route::get('/', function () {
+    return redirect('/showLoginForm');
+});
+
 //Route::view('login', 'login')->name('login')->middleware('guest');
 //Route::view('dashboard', 'dashboard')->middleware('auth');
 

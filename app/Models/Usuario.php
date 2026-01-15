@@ -32,10 +32,15 @@ class Usuario extends Authenticatable
         'apellido',
         'nombre',
         'idrol',
-        'activo',               
+        'activo',
         'ultimo_inicio_sesion',
         'cuil',
     ];
+
+    public function getAuthPassword()
+    {
+        return $this->clave;
+    }
 
     /*public function listarUsuarios()
     {
@@ -91,8 +96,8 @@ class Usuario extends Authenticatable
             'clave' => Hash::make($validated['clave']),
             'apellido' => mb_strtoupper($validated['apellido']),
             'nombre' => mb_strtoupper($validated['nombre']),
-            'idrol' => $validated["rol"],  
-            'activo' => 'T',         
+            'idrol' => $validated["rol"],
+            'activo' => 'T',
             'ultimo_inicio_sesion' => date('Y-m-d H:i:s') ?? null,
             'cuil' => $validated['cuil'] ?? null,
         ]);
@@ -108,8 +113,8 @@ class Usuario extends Authenticatable
             'usuario' => $validated['usuario'],
             'email' => $validated['email'],
             'clave' => $usuario->clave, // Solo actualizar si se proporciona una nueva clave
-            'idrol' => $validated["rol"],  
-            'activo' => 'T',        
+            'idrol' => $validated["rol"],
+            'activo' => 'T',
             'apellido' => mb_strtoupper($validated['apellido']),
             'nombre' => mb_strtoupper($validated['nombre']),
             'cuil' => $validated['cuil'] ?? null,
@@ -124,22 +129,21 @@ class Usuario extends Authenticatable
     public function roles($userId)
     {
         return DB::table('roles')
-        ->join('usuarios', 'roles.idrol', '=', 'usuarios.idrol')
-        ->where('usuarios.idrol', $userId)
-        ->pluck('roles.descripcion') // Cambia 'nombre_rol' por el nombre real
-        ->toArray();
+            ->join('usuarios', 'roles.idrol', '=', 'usuarios.idrol')
+            ->where('usuarios.idrol', $userId)
+            ->pluck('roles.descripcion') // Cambia 'nombre_rol' por el nombre real
+            ->toArray();
     }
 
     // Relación para permisos
     public function permisos($userId)
     {
         return DB::table('permisos')
-        ->join('roles_permisos', 'permisos.idpermiso', '=', 'roles_permisos.permiso_id')
-        ->join('roles', 'roles.idrol', '=', 'roles_permisos.rol_id')
-        ->join('usuarios', 'usuarios.idrol', '=', 'roles.idrol')
-        ->where('usuarios.idusuario', $userId) // Filtra por el ID del usuario
-        ->pluck('permisos.descripcion') // O la columna que contiene la descripción del permiso
-        ->toArray();
+            ->join('roles_permisos', 'permisos.idpermiso', '=', 'roles_permisos.permiso_id')
+            ->join('roles', 'roles.idrol', '=', 'roles_permisos.rol_id')
+            ->join('usuarios', 'usuarios.idrol', '=', 'roles.idrol')
+            ->where('usuarios.idusuario', $userId) // Filtra por el ID del usuario
+            ->pluck('permisos.descripcion') // O la columna que contiene la descripción del permiso
+            ->toArray();
     }
-
 }
